@@ -418,6 +418,34 @@ const timeout = function (s) {
   });
 }; // https://forkify-api.herokuapp.com/v2
 ///////////////////////////////////////
+
+
+const showRecipe = async function () {
+  try {
+    const res = await fetch( // 'https://forkify-api.herokuapp.com/api/v2/recipes/5ed6604591c37cdc054bc886'
+    'https://forkify-api.herokuapp.com/api/v2/recipes/5ed6604591c37cdc054bca5d');
+    const data = await res.json();
+    if (!res.ok) throw new Error(`${data.message} (${res.status})`);
+    let {
+      recipe
+    } = data.data;
+    recipe = {
+      id: recipe.id,
+      title: recipe.title,
+      publisher: recipe.publisher,
+      sourceUrl: recipe.source_url,
+      image: recipe.image,
+      servings: recipe.servings,
+      cookingTime: recipe.cooking_time,
+      ingredients: recipe.ingredients
+    };
+    console.log(recipe);
+  } catch (err) {
+    alert(err);
+  }
+};
+
+showRecipe();
 },{}]},{},["2e299b9e61d297f65b4aa649061b859a","175e469a7ea7db1c8c0744d04372621f"], null)
 
 //# sourceMappingURL=controller.99c82019.js.map
