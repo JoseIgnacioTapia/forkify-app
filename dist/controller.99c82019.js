@@ -5845,7 +5845,7 @@ exports.getJSON = void 0;
 
 var _regeneratorRuntime = require("regenerator-runtime");
 
-var _helpers = require("./helpers.js");
+var _config = require("./config.js");
 
 const timeout = function (s) {
   return new Promise(function (_, reject) {
@@ -5857,7 +5857,8 @@ const timeout = function (s) {
 
 const getJSON = async function (url) {
   try {
-    const res = await Promise.race([fetch(url), timeout(_helpers.TIMEOUT_SEC)]);
+    const fetchPro = fetch(url);
+    const res = await Promise.race([fetchPro, timeout(_config.TIMEOUT_SEC)]);
     const data = await res.json();
     if (!res.ok) throw new Error(`${data.message} (${res.status})`);
     return data;
@@ -5867,7 +5868,7 @@ const getJSON = async function (url) {
 };
 
 exports.getJSON = getJSON;
-},{"regenerator-runtime":"e155e0d3930b156f86c48e8d05522b16","./helpers.js":"0e8dcd8a4e1c61cf18f78e1c2563655d"}],"bcae1aced0301b01ccacb3e6f7dfede8":[function(require,module,exports) {
+},{"regenerator-runtime":"e155e0d3930b156f86c48e8d05522b16","./config.js":"09212d541c5c40ff2bd93475a904f8de"}],"bcae1aced0301b01ccacb3e6f7dfede8":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
