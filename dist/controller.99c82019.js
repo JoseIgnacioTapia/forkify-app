@@ -498,7 +498,10 @@ const controlRecipes = async function () {
 
     await model.loadRecipe(id); // 2) Rendering Recipe
 
-    _recipeView.default.render(model.state.recipe);
+    _recipeView.default.render(model.state.recipe); // Test
+
+
+    controlServings();
   } catch (err) {
     _recipeView.default.renderError();
   }
@@ -531,6 +534,13 @@ const controlPagination = function (goToPage) {
 
 
   _paginationView.default.render(model.state.search);
+};
+
+const controlServings = function () {
+  // Update the recipe servings (in state)
+  model.updateServings(4); // Update the recipe view
+
+  _recipeView.default.render(model.state.recipe);
 };
 
 const init = function () {
@@ -5081,7 +5091,7 @@ $({ target: 'URL', proto: true, enumerable: true }, {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getSearchResultPage = exports.loadSearchResults = exports.loadRecipe = exports.state = void 0;
+exports.updateServings = exports.getSearchResultPage = exports.loadSearchResults = exports.loadRecipe = exports.state = void 0;
 
 var _regeneratorRuntime = require("regenerator-runtime");
 
@@ -5157,6 +5167,15 @@ const getSearchResultPage = function (page = state.search.page) {
 };
 
 exports.getSearchResultPage = getSearchResultPage;
+
+const updateServings = function (newServings) {
+  state.recipe.ingredients.forEach(ing => {
+    ing.quantity = ing.quantity * newServings / state.recipe.servings; // newQt = oldQt * newServings / oldServings // 2 * 8 / 4 = 4
+  });
+  state.recipe.servings = newServings;
+};
+
+exports.updateServings = updateServings;
 },{"regenerator-runtime":"e155e0d3930b156f86c48e8d05522b16","./config.js":"09212d541c5c40ff2bd93475a904f8de","./helpers.js":"0e8dcd8a4e1c61cf18f78e1c2563655d"}],"e155e0d3930b156f86c48e8d05522b16":[function(require,module,exports) {
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
