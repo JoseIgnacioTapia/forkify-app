@@ -545,7 +545,7 @@ const controlServings = function (newServings) {
 };
 
 const controlAddBookmark = function () {
-  model.addBookmark(model.state.recipe);
+  if (!model.state.recipe.bookmarked) model.addBookmark(model.state.recipe);else model.deleteBookmark(model.state.recipe.id);
   console.log(model.state);
   console.log(model.state.recipe);
 
@@ -5104,7 +5104,7 @@ $({ target: 'URL', proto: true, enumerable: true }, {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.addBookmark = exports.updateServings = exports.getSearchResultPage = exports.loadSearchResults = exports.loadRecipe = exports.state = void 0;
+exports.deleteBookmark = exports.addBookmark = exports.updateServings = exports.getSearchResultPage = exports.loadSearchResults = exports.loadRecipe = exports.state = void 0;
 
 var _regeneratorRuntime = require("regenerator-runtime");
 
@@ -5140,6 +5140,13 @@ const loadRecipe = async function (id) {
       cookingTime: recipe.cooking_time,
       ingredients: recipe.ingredients
     };
+
+    if (state.bookmarks.some(bookmark => bookmark.id === id)) {
+      state.recipe.bookmarked = true;
+    } else {
+      state.recipe.bookmarked = false;
+    }
+
     console.log(state.recipe);
   } catch (err) {
     // Temp error handling
@@ -5194,12 +5201,22 @@ exports.updateServings = updateServings;
 
 const addBookmark = function (recipe) {
   // Add bookmark
-  state.bookmarks.push(recipe); // Mark current recipe as bookmark
+  state.bookmarks.push(recipe); // Mark current recipe as bookmarked
 
   if (recipe.id === state.recipe.id) state.recipe.bookmarked = true;
 };
 
 exports.addBookmark = addBookmark;
+
+const deleteBookmark = function (id) {
+  // Delete bookmark
+  const index = state.bookmarks.findIndex(el => el.id === id);
+  state.bookmarks.splice(index, 1); // Mark current recipe as NOT bookmarked
+
+  if (id === state.recipe.id) state.recipe.bookmarked = false;
+};
+
+exports.deleteBookmark = deleteBookmark;
 },{"regenerator-runtime":"e155e0d3930b156f86c48e8d05522b16","./config.js":"09212d541c5c40ff2bd93475a904f8de","./helpers.js":"0e8dcd8a4e1c61cf18f78e1c2563655d"}],"e155e0d3930b156f86c48e8d05522b16":[function(require,module,exports) {
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
