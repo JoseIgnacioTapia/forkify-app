@@ -5163,6 +5163,7 @@ var _config = require("./config.js");
 
 var _helpers = require("./helpers.js");
 
+// import { getJSON, sendJSON } from './helpers.js';
 const state = {
   recipe: {},
   search: {
@@ -5197,7 +5198,7 @@ const createRecipeObject = function (data) {
 
 const loadRecipe = async function (id) {
   try {
-    const data = await (0, _helpers.getJSON)(`${_config.API_URL}${id}`);
+    const data = await (0, _helpers.AJAX)(`${_config.API_URL}${id}`);
     state.recipe = createRecipeObject(data);
 
     if (state.bookmarks.some(bookmark => bookmark.id === id)) {
@@ -5219,7 +5220,7 @@ exports.loadRecipe = loadRecipe;
 const loadSearchResults = async function (query) {
   try {
     state.search.query = query;
-    const data = await (0, _helpers.getJSON)(`${_config.API_URL}?search=${query}`);
+    const data = await (0, _helpers.AJAX)(`${_config.API_URL}?search=${query}`);
     console.log(data);
     state.search.results = data.data.recipes.map(rec => {
       return {
@@ -5319,7 +5320,7 @@ const uploadRecipe = async function (newRecipe) {
       servings: +newRecipe.servings,
       ingredients
     };
-    const data = await (0, _helpers.sendJSON)(`${_config.API_URL}?key=${_config.KEY}`, recipe);
+    const data = await (0, _helpers.AJAX)(`${_config.API_URL}?key=${_config.KEY}`, recipe);
     state.recipe = createRecipeObject(data);
     addBookmark(state.recipe);
   } catch (error) {
@@ -6101,7 +6102,7 @@ exports.MODAL_CLOSE_SEC = MODAL_CLOSE_SEC;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.sendJSON = exports.getJSON = void 0;
+exports.AJAX = void 0;
 
 var _regeneratorRuntime = require("regenerator-runtime");
 
@@ -6115,29 +6116,15 @@ const timeout = function (s) {
   });
 };
 
-const getJSON = async function (url) {
+const AJAX = async function (url, uploadData = undefined) {
   try {
-    const fetchPro = fetch(url);
-    const res = await Promise.race([fetchPro, timeout(_config.TIMEOUT_SEC)]);
-    const data = await res.json();
-    if (!res.ok) throw new Error(`${data.message} (${res.status})`);
-    return data;
-  } catch (err) {
-    throw err;
-  }
-};
-
-exports.getJSON = getJSON;
-
-const sendJSON = async function (url, uploadData) {
-  try {
-    const fetchPro = fetch(url, {
+    const fetchPro = uploadData ? fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(uploadData)
-    });
+    }) : fetch(url);
     const res = await Promise.race([fetchPro, timeout(_config.TIMEOUT_SEC)]);
     const data = await res.json();
     if (!res.ok) throw new Error(`${data.message} (${res.status})`);
@@ -6146,8 +6133,43 @@ const sendJSON = async function (url, uploadData) {
     throw err;
   }
 };
+/*
+export const getJSON = async function (url) {
+  try {
+    const fetchPro = fetch(url);
+    const res = await Promise.race([fetchPro, timeout(TIMEOUT_SEC)]);
+    const data = await res.json();
 
-exports.sendJSON = sendJSON;
+    if (!res.ok) throw new Error(`${data.message} (${res.status})`);
+    return data;
+  } catch (err) {
+    throw err;
+  }
+};
+
+export const sendJSON = async function (url, uploadData) {
+  try {
+    const fetchPro = fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(uploadData),
+    });
+
+    const res = await Promise.race([fetchPro, timeout(TIMEOUT_SEC)]);
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(`${data.message} (${res.status})`);
+    return data;
+  } catch (err) {
+    throw err;
+  }
+};
+*/
+
+
+exports.AJAX = AJAX;
 },{"regenerator-runtime":"e155e0d3930b156f86c48e8d05522b16","./config.js":"09212d541c5c40ff2bd93475a904f8de"}],"bcae1aced0301b01ccacb3e6f7dfede8":[function(require,module,exports) {
 "use strict";
 
