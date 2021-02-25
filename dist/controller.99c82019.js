@@ -5198,7 +5198,7 @@ const createRecipeObject = function (data) {
 
 const loadRecipe = async function (id) {
   try {
-    const data = await (0, _helpers.AJAX)(`${_config.API_URL}${id}`);
+    const data = await (0, _helpers.AJAX)(`${_config.API_URL}${id}?key=${_config.KEY}`);
     state.recipe = createRecipeObject(data);
 
     if (state.bookmarks.some(bookmark => bookmark.id === id)) {
@@ -5220,14 +5220,17 @@ exports.loadRecipe = loadRecipe;
 const loadSearchResults = async function (query) {
   try {
     state.search.query = query;
-    const data = await (0, _helpers.AJAX)(`${_config.API_URL}?search=${query}`);
+    const data = await (0, _helpers.AJAX)(`${_config.API_URL}?search=${query}&key=${_config.KEY}`);
     console.log(data);
     state.search.results = data.data.recipes.map(rec => {
       return {
         id: rec.id,
         title: rec.title,
         publisher: rec.publisher,
-        image: rec.image_url
+        image: rec.image_url,
+        ...(rec.key && {
+          key: rec.key
+        })
       };
     });
     state.search.page = 1;
@@ -5301,7 +5304,8 @@ const uploadRecipe = async function (newRecipe) {
     console.log(newRecipe);
     console.log(Object.entries(newRecipe));
     const ingredients = Object.entries(newRecipe).filter(entry => entry[0].startsWith('ingredient') && entry[1] !== '').map(ing => {
-      const ingArr = ing[1].replaceAll(' ', '').split(',');
+      const ingArr = ing[1].split(',').map(el => el.trim()); // const ingArr = ing[1].replaceAll(' ', '').split(',');
+
       if (ingArr.length !== 3) throw new Error('Wrong ingredient format! Please use the correct format :)');
       const [quantity, unit, description] = ingArr;
       console.log([quantity, unit, description]);
@@ -5314,7 +5318,7 @@ const uploadRecipe = async function (newRecipe) {
     const recipe = {
       title: newRecipe.title,
       source_url: newRecipe.sourceUrl,
-      image_url: newRecipe.sourceUrl,
+      image_url: newRecipe.image,
       publisher: newRecipe.publisher,
       cooking_time: +newRecipe.cookingTime,
       servings: +newRecipe.servings,
@@ -6260,7 +6264,10 @@ class RecipeView extends _View.default {
           </div>
         </div>
 
-        <div class="recipe__user-generated">
+        <div class="recipe__user-generated ${this._data.key ? '' : 'hidden'}">
+          <svg>
+            <use href="${_icons.default}#icon-user"></use>
+          </svg>
         </div>
         <button class="btn--round btn--bookmark">
           <svg class="">
@@ -7037,6 +7044,11 @@ class PreviewView extends _View.default {
           <div class="preview__data">
             <h4 class="preview__title">${this._data.title}</h4>
             <p class="preview__publisher">${this._data.publisher}</p>
+            <div class="preview__user-generated ${this._data.key ? '' : 'hidden'}">
+              <svg>
+                <use href="${_icons.default}#icon-user"></use>
+              </svg>
+            </div>
           </div>
         </a>
       </li>
