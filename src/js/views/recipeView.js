@@ -96,16 +96,7 @@ class RecipeView extends View {
         <ul class="recipe__ingredient-list">
           ${this._data.ingredients.map(this._generateMarkupIngredient).join('')}
 
-          <li class="recipe__ingredient">
-            <svg class="recipe__icon">
-              <use href="src/img/${icons}#icon-check"></use>
-            </svg>
-            <div class="recipe__quantity">0.5</div>
-            <div class="recipe__description">
-              <span class="recipe__unit">cup</span>
-              ricotta cheese
-            </div>
-          </li>
+          
         </ul>
       </div>
 
